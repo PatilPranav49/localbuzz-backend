@@ -18,4 +18,11 @@ public interface BusinessRepository
             User owner
     );
 
+    List<Business> findByStatusAndNameContainingIgnoreCase(
+            BusinessStatus status,
+            String name
+    );
+
+
+
 }

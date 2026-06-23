@@ -1,12 +1,13 @@
 package com.example.localbuzz.business.controller;
 
+import com.example.localbuzz.business.dto.BusinessSearchResponse;
 import com.example.localbuzz.business.dto.BusinessResponse;
 import com.example.localbuzz.business.dto.CreateBusinessRequest;
 import com.example.localbuzz.business.service.BusinessService;
 import com.example.localbuzz.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.localbuzz.business.dto.PublicBusinessProfileResponse;
 import java.util.List;
 
 @RestController
@@ -47,5 +48,21 @@ public class BusinessController {
         return businessService.getMyBusinesses(
                 userDetails.getId()
         );
+    }
+
+    @GetMapping("/search")
+    public List<BusinessSearchResponse> searchBusinesses(
+            @RequestParam String keyword
+    ) {
+        return businessService.searchBusinesses(
+                keyword
+        );
+    }
+
+    @GetMapping("/{id}")
+    public PublicBusinessProfileResponse getBusinessProfile(
+            @PathVariable Long id
+    ) {
+        return businessService.getBusinessProfile(id);
     }
 }

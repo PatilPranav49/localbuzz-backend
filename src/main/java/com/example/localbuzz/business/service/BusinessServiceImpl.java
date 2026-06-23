@@ -1,5 +1,5 @@
 package com.example.localbuzz.business.service;
-
+import com.example.localbuzz.business.dto.BusinessSearchResponse;
 import com.example.localbuzz.business.dto.BusinessResponse;
 import com.example.localbuzz.business.dto.CreateBusinessRequest;
 import com.example.localbuzz.business.entity.Business;
@@ -8,7 +8,10 @@ import com.example.localbuzz.business.repository.BusinessRepository;
 import com.example.localbuzz.user.entity.User;
 import com.example.localbuzz.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
-
+import com.example.localbuzz.business.dto.PublicBusinessProfileResponse;
+import com.example.localbuzz.feed.dto.FeedItemResponse;
+import com.example.localbuzz.update.entity.Update;
+import com.example.localbuzz.update.repository.UpdateRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,13 +20,16 @@ public class BusinessServiceImpl implements BusinessService {
 
     private final BusinessRepository businessRepository;
     private final UserRepository userRepository;
+    private final UpdateRepository updateRepository;
 
     public BusinessServiceImpl(
             BusinessRepository businessRepository,
-            UserRepository userRepository
-    ) {
+            UserRepository userRepository,
+            UpdateRepository updateRepository
+    ){
         this.businessRepository = businessRepository;
         this.userRepository = userRepository;
+        this.updateRepository = updateRepository;
     }
 
     @Override
@@ -155,6 +161,94 @@ public class BusinessServiceImpl implements BusinessService {
                 .status(savedBusiness.getStatus())
                 .active(savedBusiness.getActive())
                 .createdAt(savedBusiness.getCreatedAt())
+                .build();
+    }
+
+    @Override
+    public List<BusinessSearchResponse> searchBusinesses(
+            String keyword
+    ) {
+
+        String searchTerm = keyword.toLowerCase();
+
+        return businessRepository
+                .findByStatus(BusinessStatus.APPROVED)
+                .stream()
+
+                .filter(business ->
+                        business.getName()
+                                .toLowerCase()
+                                .contains(searchTerm)
+
+                                ||
+
+                                business.getCategory()
+                                        .name()
+                                        .toLowerCase()
+                                        .contains(searchTerm)
+                )
+
+                .map(business ->
+                        BusinessSearchResponse.builder()
+                                .id(business.getId())
+                                .name(business.getName())
+                                .category(business.getCategory())
+                                .address(business.getAddress())
+                                .build()
+                )
+                .toList();
+    }
+
+    @Override
+    public PublicBusinessProfileResponse getBusinessProfile(
+            Long businessId
+    ) {
+
+        Business business = businessRepository.findById(businessId)
+                .orElseThrow(() ->
+                        new RuntimeException("Business not found"));
+
+        List<FeedItemResponse> recentUpdates =
+                updateRepository
+                        .findByBusinessIdOrderByCreatedAtDesc(
+                                businessId
+                        )
+                        .stream()
+                        .map(update ->
+                                FeedItemResponse.builder()
+                                        .updateId(update.getId())
+                                        .businessName(
+                                                business.getName()
+                                        )
+                                        .updateType(
+                                                update.getType()
+                                        )
+                                        .title(
+                                                update.getTitle()
+                                        )
+                                        .description(
+                                                update.getDescription()
+                                        )
+                                        .createdAt(
+                                                update.getCreatedAt()
+                                        )
+                                        .build()
+                        )
+                        .toList();
+
+        return PublicBusinessProfileResponse.builder()
+                .id(business.getId())
+                .name(business.getName())
+                .description(business.getDescription())
+                .address(business.getAddress())
+                .latitude(business.getLatitude())
+                .longitude(business.getLongitude())
+                .phone(business.getPhone())
+                .website(business.getWebsite())
+                .coverImageUrl(business.getCoverImageUrl())
+                .category(business.getCategory())
+                .status(business.getStatus())
+                .recentUpdates(recentUpdates)
                 .build();
     }
 }
