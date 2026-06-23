@@ -1,18 +1,12 @@
-# LocalBuzz Backend
+# LocalBuzz 2.0 Backend
 
-LocalBuzz is a community discovery platform that helps users discover nearby businesses, offers, events, and updates in their locality.
+## Overview
 
-The platform enables business owners to register their businesses, publish updates, and allows users to stay informed about what's happening around them.
+LocalBuzz is a community discovery platform that helps users discover nearby businesses, offers, events, products, and announcements in their locality.
 
-## Tech Stack
+Business owners can register businesses, publish updates, and promote local engagement, while users can explore businesses through feeds, maps, search, and business profiles.
 
-* Java 21
-* Spring Boot
-* Spring Security
-* JWT Authentication
-* PostgreSQL
-* Spring Data JPA / Hibernate
-* Maven
+---
 
 ## Features
 
@@ -20,9 +14,9 @@ The platform enables business owners to register their businesses, publish updat
 
 * User Registration
 * User Login
+* JWT Authentication
 * BCrypt Password Encryption
-* JWT-based Authentication
-* Role-Based Authorization
+* Role-Based Access Control
 
 Supported Roles:
 
@@ -30,160 +24,286 @@ Supported Roles:
 * OWNER
 * ADMIN
 
+---
+
 ### Business Management
 
 Business owners can:
 
-* Create Businesses
+* Register Businesses
 * View Their Businesses
 * Manage Business Information
 
-Business Categories include:
+Supported Categories:
 
-* Restaurant
-* Cafe
-* Gym
-* Medical
-* Education
-* Retail
-* And more
+* CAFE
+* BAKERY
+* RESTAURANT
+* GYM
+* SALON
+* MEDICAL
+* JEWELLERY
+* OTHER
 
-### Business Approval Workflow
+---
 
-All businesses require approval before becoming public.
+### Admin Approval Workflow
+
+All businesses must be approved before becoming publicly visible.
 
 Workflow:
 
-Owner Registers Business
+OWNER Creates Business
 
 ↓
 
-Business Status = PENDING
+PENDING
 
 ↓
 
-Admin Reviews Business
+ADMIN Reviews
 
 ↓
 
 APPROVED / REJECTED
 
-### Update Management
+---
 
-Business owners can publish:
+### Business Updates
 
-* Offers
-* Events
-* Product Launches
-* Service Updates
-* Announcements
+Owners can publish:
 
-Only the owner of a business can create updates for that business.
+* OFFER
+* EVENT
+* PRODUCT
+* SERVICE
+* ANNOUNCEMENT
 
-Users can view updates published by businesses.
+Updates are visible only for approved businesses.
 
-## API Endpoints
+---
+
+### Discovery Feed
+
+Users can browse the latest updates from approved businesses.
+
+Endpoint:
+
+GET /feed
+
+---
+
+### Map Discovery
+
+Users can discover nearby businesses using location-based search.
+
+Endpoint:
+
+GET /feed/nearby?lat={lat}&lng={lng}&radius={radius}
+
+Features:
+
+* Radius Filtering
+* Distance Calculation
+* Latest Business Update
+* Map-Friendly Response
+
+---
+
+### Feed Filtering
+
+Filter feed results by:
+
+* Business Category
+* Update Type
+
+Examples:
+
+GET /feed?category=CAFE
+
+GET /feed?type=OFFER
+
+GET /feed?category=CAFE&type=OFFER
+
+---
+
+### Business Search
+
+Search approved businesses by:
+
+* Business Name
+* Business Category
+
+Example:
+
+GET /businesses/search?keyword=cafe
+
+---
+
+### Public Business Profile
+
+View complete business details and recent updates.
+
+Example:
+
+GET /businesses/{id}
+
+---
+
+## Tech Stack
+
+* Java 24
+* Spring Boot
+* Spring Security
+* JWT Authentication
+* PostgreSQL
+* Spring Data JPA
+* Hibernate
+* Maven
+
+---
+
+## Architecture
+
+Package-by-Feature Architecture
+
+DTO → Service → Repository → Entity
+
+Modules:
+
+* auth
+* user
+* business
+* admin
+* update
+* feed
+* security
+
+---
+
+## Core API Endpoints
 
 ### Authentication
 
-| Method | Endpoint        | Description   |
-| ------ | --------------- | ------------- |
-| POST   | /users/register | Register User |
-| POST   | /users/login    | Login User    |
+POST /users/register
 
-### Business Module
+POST /users/login
 
-| Method | Endpoint       | Description          |
-| ------ | -------------- | -------------------- |
-| POST   | /businesses    | Create Business      |
-| GET    | /businesses/my | Get Owner Businesses |
+---
 
-### Admin Module
+### Business
 
-| Method | Endpoint                       | Description      |
-| ------ | ------------------------------ | ---------------- |
-| POST   | /admin/businesses/{id}/approve | Approve Business |
-| POST   | /admin/businesses/{id}/reject  | Reject Business  |
+POST /businesses
 
-### Update Module
+GET /businesses/my
 
-| Method | Endpoint                 | Description          |
-| ------ | ------------------------ | -------------------- |
-| POST   | /updates                 | Create Update        |
-| GET    | /businesses/{id}/updates | Get Business Updates |
+GET /businesses/search
 
-## Database
+GET /businesses/{id}
 
-Main Entities:
+---
 
-* User
-* Business
-* Update
+### Admin
+
+POST /admin/businesses/{id}/approve
+
+POST /admin/businesses/{id}/reject
+
+---
+
+### Updates
+
+POST /updates
+
+GET /businesses/{id}/updates
+
+---
+
+### Feed
+
+GET /feed
+
+GET /feed/nearby
+
+---
+
+## Database Model
+
+User
+
+↓
+
+Business
+
+↓
+
+Update
 
 Relationships:
 
-User (OWNER)
-→ Business
-→ Update
+* One User can own multiple Businesses
+* One Business can have multiple Updates
 
-## Project Workflow
+---
 
-OWNER Register
+## Local Setup
 
-↓
+1. Clone Repository
 
-OWNER Login
+git clone <repository-url>
 
-↓
+2. Configure PostgreSQL
 
-Create Business
+Create database:
 
-↓
+localbuzz
 
-PENDING Approval
+3. Configure application.properties
 
-↓
+spring.datasource.url=jdbc:postgresql://localhost:5432/localbuzz
 
-ADMIN Approves Business
+spring.datasource.username=your_username
 
-↓
+spring.datasource.password=your_password
 
-Business Becomes Active
+4. Run Application
 
-↓
+mvn spring-boot:run
 
-OWNER Creates Updates
-
-↓
-
-Users View Updates
-
-## Future Enhancements
-
-* Discovery Feed
-* Radius-Based Search
-* Location-Based Recommendations
-* Business Reviews
-* Business Analytics
-* Media Upload Support
-* Advanced Search & Filtering
+---
 
 ## Project Status
 
-Current Phase: Phase 5 - Update Module Completed
+Backend Version: V1 Complete
 
 Completed Modules:
 
 * Authentication
 * Authorization
-* Business Management
+* Business Registration
 * Admin Approval Workflow
-* Update Management
-
-Upcoming Module:
-
+* Business Updates
 * Discovery Feed
+* Map Discovery
+* Feed Filtering
+* Business Search
+* Public Business Profile
+
+---
+
+## Future Enhancements
+
+* Reviews & Ratings
+* Image Uploads
+* Bookmarks/Favorites
+* Push Notifications
+* Admin Dashboard
+* Analytics & Insights
+* Google Maps Route Integration
+
+---
 
 ## Author
 
+Pranav Patil
 Pranav Patil
