@@ -1,5 +1,8 @@
 package com.example.localbuzz.user.controller;
 
+import com.example.localbuzz.user.dto.UserProfileResponse;
+import com.example.localbuzz.security.CustomUserDetails;
+import org.springframework.security.core.Authentication;
 import com.example.localbuzz.security.CustomUserDetails;
 import com.example.localbuzz.security.JwtService;
 import com.example.localbuzz.user.dto.LoginRequest;
@@ -43,7 +46,19 @@ public class UserController {
                 jwtService.generateToken("pranav@gmail.com");
         return jwtService.extractEmail(token);
     }
+    @GetMapping("/me")
+    public UserProfileResponse getProfile(
+            Authentication authentication
+    ) {
 
+        CustomUserDetails userDetails =
+                (CustomUserDetails)
+                        authentication.getPrincipal();
+
+        return userService.getProfile(
+                userDetails.getId()
+        );
+    }
     @PostMapping("/register")
     public UserResponse register(@RequestBody RegisterRequest request) {
         return userService.register(request);

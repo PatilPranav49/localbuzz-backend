@@ -19,7 +19,8 @@ public class FeedServiceImpl implements FeedService {
     @Override
     public List<FeedItemResponse> getFeed(
             String category,
-            String type
+            String type,
+            String search
     ) {
 
         List<Update> updates =
@@ -44,13 +45,67 @@ public class FeedServiceImpl implements FeedService {
                                         .equalsIgnoreCase(type)
                 )
 
+                .filter(update ->
+                        search == null ||
+                                search.isBlank() ||
+
+                                update.getTitle()
+                                        .toLowerCase()
+                                        .contains(search.toLowerCase())
+
+                                ||
+
+                                update.getDescription()
+                                        .toLowerCase()
+                                        .contains(search.toLowerCase())
+
+                                ||
+
+                                update.getBusiness()
+                                        .getName()
+                                        .toLowerCase()
+                                        .contains(search.toLowerCase())
+                )
+
                 .map(update -> FeedItemResponse.builder()
                         .updateId(update.getId())
-                        .businessName(update.getBusiness().getName())
-                        .updateType(update.getType())
-                        .title(update.getTitle())
-                        .description(update.getDescription())
-                        .createdAt(update.getCreatedAt())
+
+                        .businessId(
+                                update.getBusiness().getId()
+                        )
+
+                        .businessName(
+                                update.getBusiness().getName()
+                        )
+
+                        .category(
+                                update.getBusiness().getCategory()
+                        )
+
+                        .address(
+                                update.getBusiness().getAddress()
+                        )
+
+                        .coverImageUrl(
+                                update.getBusiness().getCoverImageUrl()
+                        )
+
+                        .updateType(
+                                update.getType()
+                        )
+
+                        .title(
+                                update.getTitle()
+                        )
+
+                        .description(
+                                update.getDescription()
+                        )
+
+                        .createdAt(
+                                update.getCreatedAt()
+                        )
+
                         .build())
                 .toList();
     }
@@ -132,4 +187,5 @@ public class FeedServiceImpl implements FeedService {
 
         return EARTH_RADIUS * c;
     }
+
 }

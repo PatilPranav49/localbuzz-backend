@@ -9,7 +9,8 @@ public interface FeedService {
 
     List<FeedItemResponse> getFeed(
             String category,
-            String type
+            String type,
+            String search
     );
 
     List<NearbyBusinessResponse> getNearbyBusinesses(
@@ -17,4 +18,5 @@ public interface FeedService {
             Double longitude,
             Double radiusKm
     );
+
 }

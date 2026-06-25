@@ -5,5 +5,6 @@ package com.example.localbuzz.user.entity;
 public enum Role {
     USER,
     OWNER,
+    COMMUNITY_ADMIN,
     ADMIN
 }

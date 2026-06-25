@@ -1,5 +1,5 @@
     package com.example.localbuzz.user.service;
-
+    import com.example.localbuzz.user.dto.UserProfileResponse;
     import com.example.localbuzz.user.dto.LoginRequest;
     import com.example.localbuzz.user.dto.LoginResponse;
     import com.example.localbuzz.user.dto.RegisterRequest;
@@ -8,4 +8,7 @@
 
         UserResponse register(RegisterRequest request);
         LoginResponse login(LoginRequest request);
+        UserProfileResponse getProfile(
+                Long userId
+        );
     }

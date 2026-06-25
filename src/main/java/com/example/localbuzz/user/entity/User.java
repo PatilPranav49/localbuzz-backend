@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class User {
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean approved = true;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

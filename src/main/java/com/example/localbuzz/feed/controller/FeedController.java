@@ -18,11 +18,13 @@ public class FeedController {
     @GetMapping("/feed")
     public List<FeedItemResponse> getFeed(
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String type
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String search
     ) {
         return feedService.getFeed(
                 category,
-                type
+                type,
+                search
         );
     }
 
@@ -38,4 +40,5 @@ public class FeedController {
                 radius
         );
     }
+
 }
