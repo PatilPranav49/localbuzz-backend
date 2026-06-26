@@ -1,16 +1,16 @@
-# LocalBuzz 2.0 Backend
+# LocalBuzz Backend
 
 ## Overview
 
-LocalBuzz is a community discovery platform that helps users discover nearby businesses, offers, events, products, and announcements in their locality.
+LocalBuzz is a location-based community discovery platform that connects users with nearby businesses, local events, community announcements, and promotional offers.
 
-Business owners can register businesses, publish updates, and promote local engagement, while users can explore businesses through feeds, maps, search, and business profiles.
+The backend is built using **Spring Boot** and follows a **package-by-feature architecture**. It provides secure REST APIs for authentication, business management, community management, AI-powered content generation, administrative approval workflows, and personalized discovery feeds.
 
 ---
 
-## Features
+# Features
 
-### Authentication & Authorization
+## Authentication & Authorization
 
 * User Registration
 * User Login
@@ -18,7 +18,7 @@ Business owners can register businesses, publish updates, and promote local enga
 * BCrypt Password Encryption
 * Role-Based Access Control
 
-Supported Roles:
+### Supported Roles
 
 * USER
 * OWNER
@@ -26,15 +26,16 @@ Supported Roles:
 
 ---
 
-### Business Management
+## Business Management
 
 Business owners can:
 
 * Register Businesses
 * View Their Businesses
 * Manage Business Information
+* Publish Business Updates
 
-Supported Categories:
+### Supported Business Categories
 
 * CAFE
 * BAKERY
@@ -47,31 +48,27 @@ Supported Categories:
 
 ---
 
-### Admin Approval Workflow
+## Business Approval Workflow
 
-All businesses must be approved before becoming publicly visible.
+All newly registered businesses require administrator approval before becoming publicly visible.
 
-Workflow:
-
-OWNER Creates Business
-
-↓
-
-PENDING
-
-↓
-
-ADMIN Reviews
-
-↓
-
-APPROVED / REJECTED
+```
+Owner
+   │
+Create Business
+   │
+Pending
+   │
+Admin Review
+   │
+Approved / Rejected
+```
 
 ---
 
-### Business Updates
+## Business Updates
 
-Owners can publish:
+Business owners can publish updates such as:
 
 * OFFER
 * EVENT
@@ -83,25 +80,40 @@ Updates are visible only for approved businesses.
 
 ---
 
-### Discovery Feed
+## Community Module
 
-Users can browse the latest updates from approved businesses.
+Community administrators can:
 
-Endpoint:
+* Create Community Posts
+* Publish Local Notices
+* Publish Community Events
+* Publish Emergency Alerts
 
-GET /feed
+Community posts also follow an approval workflow before becoming visible.
 
 ---
 
-### Map Discovery
+## Discovery Feed
 
-Users can discover nearby businesses using location-based search.
+Users can explore:
 
-Endpoint:
+* Latest Business Updates
+* Community Announcements
+* Local Events
+* Promotional Offers
 
-GET /feed/nearby?lat={lat}&lng={lng}&radius={radius}
+Supports filtering by:
 
-Features:
+* Business Category
+* Update Type
+
+---
+
+## Nearby Business Discovery
+
+Location-based APIs allow users to discover nearby businesses.
+
+Features include:
 
 * Radius Filtering
 * Distance Calculation
@@ -110,200 +122,230 @@ Features:
 
 ---
 
-### Feed Filtering
+## Business Search
 
-Filter feed results by:
-
-* Business Category
-* Update Type
-
-Examples:
-
-GET /feed?category=CAFE
-
-GET /feed?type=OFFER
-
-GET /feed?category=CAFE&type=OFFER
-
----
-
-### Business Search
-
-Search approved businesses by:
+Users can search businesses by:
 
 * Business Name
 * Business Category
 
-Example:
+---
 
-GET /businesses/search?keyword=cafe
+## Public Business Profile
+
+Each business profile includes:
+
+* Business Details
+* Address
+* Category
+* Description
+* Recent Updates
 
 ---
 
-### Public Business Profile
+## AI Features (Spring AI)
 
-View complete business details and recent updates.
+The backend integrates **Spring AI** to generate business content.
 
-Example:
+Available AI services:
 
-GET /businesses/{id}
+* AI Business Description Generator
+* AI Promotional Post Generator
+* AI Community Announcement Generator
 
 ---
 
-## Tech Stack
+# Technology Stack
 
 * Java 24
 * Spring Boot
 * Spring Security
+* Spring AI
 * JWT Authentication
-* PostgreSQL
 * Spring Data JPA
 * Hibernate
+* PostgreSQL
 * Maven
 
 ---
 
-## Architecture
+# Architecture
 
-Package-by-Feature Architecture
+The project follows a **Package-by-Feature Architecture**.
 
-DTO → Service → Repository → Entity
+```
+Controller
+      │
+Service
+      │
+Repository
+      │
+Entity
+```
 
-Modules:
+### Project Modules
 
-* auth
-* user
-* business
 * admin
-* update
+* ai
+* business
+* community
+* config
+* exception
 * feed
+* owner
 * security
+* update
+* user
 
 ---
 
-## Core API Endpoints
+# Core API Modules
 
-### Authentication
+## User
 
-POST /users/register
-
-POST /users/login
-
----
-
-### Business
-
-POST /businesses
-
-GET /businesses/my
-
-GET /businesses/search
-
-GET /businesses/{id}
+* User Registration
+* User Login
+* User Profile
 
 ---
 
-### Admin
+## Business
 
-POST /admin/businesses/{id}/approve
-
-POST /admin/businesses/{id}/reject
-
----
-
-### Updates
-
-POST /updates
-
-GET /businesses/{id}/updates
-
----
-
-### Feed
-
-GET /feed
-
-GET /feed/nearby
-
----
-
-## Database Model
-
-User
-
-↓
-
-Business
-
-↓
-
-Update
-
-Relationships:
-
-* One User can own multiple Businesses
-* One Business can have multiple Updates
-
----
-
-## Local Setup
-
-1. Clone Repository
-
-git clone <repository-url>
-
-2. Configure PostgreSQL
-
-Create database:
-
-localbuzz
-
-3. Configure application.properties
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/localbuzz
-
-spring.datasource.username=your_username
-
-spring.datasource.password=your_password
-
-4. Run Application
-
-mvn spring-boot:run
-
----
-
-## Project Status
-
-Backend Version: V1 Complete
-
-Completed Modules:
-
-* Authentication
-* Authorization
-* Business Registration
-* Admin Approval Workflow
-* Business Updates
-* Discovery Feed
-* Map Discovery
-* Feed Filtering
-* Business Search
+* Register Business
+* View Owner Businesses
+* Search Businesses
 * Public Business Profile
 
 ---
 
-## Future Enhancements
+## Updates
 
-* Reviews & Ratings
-* Image Uploads
-* Bookmarks/Favorites
-* Push Notifications
-* Admin Dashboard
-* Analytics & Insights
-* Google Maps Route Integration
+* Create Business Update
+* View Business Updates
 
 ---
 
-## Author
+## Community
 
-Pranav Patil
-Pranav Patil
+* Create Community Post
+* View Community Feed
+
+---
+
+## Feed
+
+* Discovery Feed
+* Nearby Businesses
+
+---
+
+## Admin
+
+* Approve Businesses
+* Reject Businesses
+* Approve Community Posts
+* Reject Community Posts
+
+---
+
+## AI
+
+* Generate Business Description
+* Generate Promotional Post
+* Generate Community Announcement
+
+---
+
+# Database Design
+
+```
+User
+├── Business
+│     └── Update
+└── Community Post
+```
+
+Relationships
+
+* One User can own multiple Businesses.
+* One Business can publish multiple Updates.
+* Community Administrators can publish Community Posts.
+
+---
+
+# Security
+
+* JWT Authentication
+* BCrypt Password Encoding
+* Role-Based Authorization
+* Protected REST APIs
+* Stateless Authentication
+
+---
+
+# Local Setup
+
+## Clone Repository
+
+```bash
+git clone <repository-url>
+```
+
+## Configure PostgreSQL
+
+Create a database named:
+
+```
+localbuzz
+```
+
+## Configure application.properties
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/localbuzz
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
+
+## Run the Application
+
+```bash
+mvn spring-boot:run
+```
+
+---
+
+# Project Status
+
+**Version:** Complete
+
+Implemented Modules
+
+* Authentication & Authorization
+* Business Management
+* Business Approval Workflow
+* Business Updates
+* Community Module
+* Discovery Feed
+* Nearby Business Search
+* Business Search
+* Public Business Profiles
+* Spring AI Integration
+* Google Maps Ready APIs
+
+---
+
+# Future Enhancements
+
+* Business Image Uploads
+* Reviews & Ratings
+* Bookmarks / Favorites
+* Push Notifications
+* Analytics Dashboard
+* Business Insights
+
+---
+
+# Author
+
+**Pranav Patil**
