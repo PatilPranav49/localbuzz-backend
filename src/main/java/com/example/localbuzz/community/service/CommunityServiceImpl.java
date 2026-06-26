@@ -3,9 +3,12 @@ package com.example.localbuzz.community.service;
 import com.example.localbuzz.community.dto.CommunityPostRequest;
 import com.example.localbuzz.community.dto.CommunityPostResponse;
 import com.example.localbuzz.community.entity.CommunityPost;
+import com.example.localbuzz.community.exception.CommunityAccessDeniedException;
+import com.example.localbuzz.community.exception.CommunityPostNotFoundException;
 import com.example.localbuzz.community.repository.CommunityPostRepository;
 import com.example.localbuzz.user.entity.Role;
 import com.example.localbuzz.user.entity.User;
+import com.example.localbuzz.user.exception.UserNotFoundException;
 import com.example.localbuzz.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,12 +30,12 @@ public class CommunityServiceImpl implements CommunityService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new UserNotFoundException("User not found"));
 
         if (user.getRole() != Role.COMMUNITY_ADMIN
                 && user.getRole() != Role.ADMIN) {
 
-            throw new RuntimeException(
+            throw new CommunityAccessDeniedException(
                     "Only Community Admin can post");
         }
 
@@ -85,12 +88,12 @@ public class CommunityServiceImpl implements CommunityService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new UserNotFoundException("User not found"));
 
         CommunityPost post =
                 communityPostRepository.findById(postId)
                         .orElseThrow(() ->
-                                new RuntimeException(
+                                new CommunityPostNotFoundException(
                                         "Post not found"));
 
         if (user.getRole() == Role.ADMIN
@@ -102,7 +105,7 @@ public class CommunityServiceImpl implements CommunityService {
             return;
         }
 
-        throw new RuntimeException(
+        throw new CommunityAccessDeniedException(
                 "Not authorized");
     }
 

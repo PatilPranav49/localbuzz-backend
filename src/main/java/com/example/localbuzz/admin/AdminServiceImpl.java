@@ -3,9 +3,11 @@ package com.example.localbuzz.admin;
 import com.example.localbuzz.business.dto.BusinessResponse;
 import com.example.localbuzz.business.entity.Business;
 import com.example.localbuzz.business.entity.BusinessStatus;
+import com.example.localbuzz.business.exception.BusinessNotFoundException;
 import com.example.localbuzz.business.repository.BusinessRepository;
 import com.example.localbuzz.user.entity.Role;
 import com.example.localbuzz.user.entity.User;
+import com.example.localbuzz.user.exception.UserNotFoundException;
 import com.example.localbuzz.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +40,8 @@ public class AdminServiceImpl implements AdminService {
     public BusinessResponse approveBusiness(Long businessId) {
 
         Business business = businessRepository.findById(businessId)
-                .orElseThrow(() -> new RuntimeException("Business not found"));
+                .orElseThrow(() ->
+                        new BusinessNotFoundException("Business not found"));
 
         business.setStatus(BusinessStatus.APPROVED);
 
@@ -60,7 +63,8 @@ public class AdminServiceImpl implements AdminService {
     public User approveCommunityAdmin(Long userId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new UserNotFoundException("User not found"));
 
         user.setApproved(true);
 

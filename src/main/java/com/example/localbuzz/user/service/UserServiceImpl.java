@@ -6,14 +6,14 @@ import com.example.localbuzz.user.entity.Role;
 import com.example.localbuzz.user.entity.User;
 import com.example.localbuzz.user.exception.AccountNotApprovedException;
 import com.example.localbuzz.user.exception.EmailAlreadyExistsException;
+import com.example.localbuzz.user.exception.InvalidCredentialsException;
+import com.example.localbuzz.user.exception.UserNotFoundException;
 import com.example.localbuzz.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import com.example.localbuzz.user.exception.AccountNotApprovedException;
-import com.example.localbuzz.user.exception.InvalidCredentialsException;
-import com.example.localbuzz.user.exception.UserNotFoundException;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -34,7 +34,8 @@ public class UserServiceImpl implements UserService {
 
         User user =
                 userRepository.findById(userId)
-                        .orElseThrow();
+                        .orElseThrow(() ->
+                                new UserNotFoundException("User not found"));
 
         return UserProfileResponse.builder()
                 .id(user.getId())
@@ -74,14 +75,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginResponse login(LoginRequest request) {
 
-        System.out.println("Email entered: " + request.getEmail());
-
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() ->
                         new UserNotFoundException("User not found"));
-
-        System.out.println("Stored hash: " + user.getPassword());
-        System.out.println("Entered password: " + request.getPassword());
 
         if (!passwordEncoder.matches(
                 request.getPassword(),

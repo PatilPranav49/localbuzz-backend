@@ -1,17 +1,16 @@
 package com.example.localbuzz.user.controller;
 
-import com.example.localbuzz.user.dto.UserProfileResponse;
-import com.example.localbuzz.security.CustomUserDetails;
-import org.springframework.security.core.Authentication;
 import com.example.localbuzz.security.CustomUserDetails;
 import com.example.localbuzz.security.JwtService;
 import com.example.localbuzz.user.dto.LoginRequest;
 import com.example.localbuzz.user.dto.LoginResponse;
 import com.example.localbuzz.user.dto.RegisterRequest;
+import com.example.localbuzz.user.dto.UserProfileResponse;
 import com.example.localbuzz.user.dto.UserResponse;
 import com.example.localbuzz.user.service.UserService;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {

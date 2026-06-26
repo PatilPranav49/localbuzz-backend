@@ -1,17 +1,20 @@
 package com.example.localbuzz.business.service;
+
 import com.example.localbuzz.business.dto.BusinessSearchResponse;
 import com.example.localbuzz.business.dto.BusinessResponse;
 import com.example.localbuzz.business.dto.CreateBusinessRequest;
+import com.example.localbuzz.business.dto.PublicBusinessProfileResponse;
 import com.example.localbuzz.business.entity.Business;
 import com.example.localbuzz.business.entity.BusinessStatus;
+import com.example.localbuzz.business.exception.BusinessNotFoundException;
 import com.example.localbuzz.business.repository.BusinessRepository;
-import com.example.localbuzz.user.entity.User;
-import com.example.localbuzz.user.repository.UserRepository;
-import org.springframework.stereotype.Service;
-import com.example.localbuzz.business.dto.PublicBusinessProfileResponse;
 import com.example.localbuzz.feed.dto.FeedItemResponse;
-import com.example.localbuzz.update.entity.Update;
+import com.example.localbuzz.user.entity.User;
+import com.example.localbuzz.user.exception.UserNotFoundException;
+import com.example.localbuzz.user.repository.UserRepository;
 import com.example.localbuzz.update.repository.UpdateRepository;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +43,7 @@ public class BusinessServiceImpl implements BusinessService {
 
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new UserNotFoundException("User not found"));
 
         Business business = Business.builder()
                 .name(request.getName())
@@ -84,7 +87,7 @@ public class BusinessServiceImpl implements BusinessService {
 
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new UserNotFoundException("User not found"));
 
         return businessRepository.findByOwner(owner)
                 .stream()
@@ -113,7 +116,7 @@ public class BusinessServiceImpl implements BusinessService {
 
         Business business = businessRepository.findById(businessId)
                 .orElseThrow(() ->
-                        new RuntimeException("Business not found"));
+                        new BusinessNotFoundException("Business not found"));
 
         business.setStatus(BusinessStatus.APPROVED);
 
@@ -141,7 +144,7 @@ public class BusinessServiceImpl implements BusinessService {
 
         Business business = businessRepository.findById(businessId)
                 .orElseThrow(() ->
-                        new RuntimeException("Business not found"));
+                        new BusinessNotFoundException("Business not found"));
 
         business.setStatus(BusinessStatus.REJECTED);
 
@@ -206,7 +209,7 @@ public class BusinessServiceImpl implements BusinessService {
 
         Business business = businessRepository.findById(businessId)
                 .orElseThrow(() ->
-                        new RuntimeException("Business not found"));
+                        new BusinessNotFoundException("Business not found"));
 
         List<FeedItemResponse> recentUpdates =
                 updateRepository

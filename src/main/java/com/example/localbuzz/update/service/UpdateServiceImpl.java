@@ -1,12 +1,14 @@
 package com.example.localbuzz.update.service;
 
 import com.example.localbuzz.business.entity.Business;
+import com.example.localbuzz.business.exception.BusinessAccessDeniedException;
 import com.example.localbuzz.business.repository.BusinessRepository;
 import com.example.localbuzz.update.dto.CreateUpdateRequest;
 import com.example.localbuzz.update.dto.UpdateResponse;
 import com.example.localbuzz.update.entity.Update;
 import com.example.localbuzz.update.repository.UpdateRepository;
 import com.example.localbuzz.user.entity.User;
+import com.example.localbuzz.user.exception.UserNotFoundException;
 import com.example.localbuzz.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +41,7 @@ public class UpdateServiceImpl
         User owner = userRepository
                 .findByEmail(email)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new UserNotFoundException("User not found"));
 
         Business business = businessRepository
                 .findByIdAndOwner(
@@ -47,7 +49,7 @@ public class UpdateServiceImpl
                         owner
                 )
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new BusinessAccessDeniedException(
                                 "Business not found or not owned by user"
                         ));
 
